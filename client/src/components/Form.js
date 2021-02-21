@@ -15,8 +15,7 @@ function Form(props) {
         axios.post(props.api, time)
         .then((response) => {
             setLoading(false)
-            console.log(response)
-            if ( response.status == 200 ) {
+            if ( response.status === 200 ) {
                 let data = response.data
                 setResult({
                     dayTime: {
