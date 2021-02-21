@@ -1,30 +1,23 @@
 import { useState } from 'react';
 
-import { TextInput, Button, Switch, TimePicker, Row, Preloader, ProgressBar, Tabs, Tab, Autocomplete, Toast } from 'react-materialize';
+import { Button, TimePicker, Row, ProgressBar, Tabs, Tab, Autocomplete } from 'react-materialize';
 
 import axios from 'axios';
 
 function Form(props) {
 
-    const [ state, setState ] = useState({
-        loading: false
-    })
+    var [ time, setTime ] = useState({})
+    var [ loading, setLoading ] = useState(false)
 
     const fetch = () => {
-        setState({
-            loading: true
-        })
+        setLoading(true)
         axios.post('http://localhost:4000/count-hours', time)
         .then((response) => {
-            setState({
-                loading: false
-            })
+            setLoading(false)
             console.log(response.data)
         })
         .catch(error => {
-            setState({
-                loading: false
-            })
+            setLoading(false)
             console.log(error)
         })
     }
@@ -47,14 +40,14 @@ function Form(props) {
      * Render loading bar
      */
     const renderLoading = () => {
-        if ( state.loading ) {
+        if ( loading ) {
             return (
                 <ProgressBar />
             )
         }
     }
 
-    var time = {}
+    var period = {}
 
     return (
         <div>
@@ -67,14 +60,18 @@ function Form(props) {
                                 options={{
                                     defaultTime: '00',
                                     twelveHour: false,
-                                    onSelect: (value, minute) => time = {...time, entry: {hour: value, minute: minute}},
+                                    onSelect: (value, minute) => {
+                                        period = {...time, ...period, entry: {hour: value, minute: minute}}
+                                    },
+                                    onCloseEnd: () => setTime(period)
                                 }}
                             />
                             <TimePicker
                                 label='Horário de saída'
                                 options={{
                                     twelveHour: false,
-                                    onSelect: (value, minute) => time = {...time, departure: {hour: value, minute: minute}},
+                                    onSelect: (value, minute) => period = {...time, ...period, departure: {hour: value, minute: minute}},
+                                    onCloseEnd: () => setTime(period)
                                 }}
                             />
                         </Row>
