@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { TextInput, Button, Switch, TimePicker, Row, Preloader, ProgressBar, Tabs, Tab, Autocomplete } from 'react-materialize';
+
+import { TextInput, Button, Switch, TimePicker, Row, Preloader, ProgressBar, Tabs, Tab, Autocomplete, Toast } from 'react-materialize';
 
 import axios from 'axios';
 
@@ -10,23 +11,27 @@ function Form(props) {
     })
 
     const fetch = () => {
-
-        if ( validate(time) ) {
+        setState({
+            loading: true
+        })
+        axios.post('http://localhost:4000/count-hours', time)
+        .then((response) => {
             setState({
-                loading: true
+                loading: false
             })
-            axios.post('http://localhost:4000/count-hours', time)
-            .then((response) => {
-                console.log(response.data)
+            console.log(response.data)
+        })
+        .catch(error => {
+            setState({
+                loading: false
             })
-            .catch(error => {
-                console.log(error)
-                alert(error)
-            })
-        }
+            console.log(error)
+        })
     }
 
-    // Faz uma validação required
+    /**
+     * Do the required validation of entry hour and departure hour
+     */
     const validate = () => {
         if ( time.entry && time.departure ) {
             if ( time.entry.hour == 0 ) time.entry.hour = 24
@@ -38,6 +43,9 @@ function Form(props) {
         return false
     }
 
+    /**
+     * Render loading bar
+     */
     const renderLoading = () => {
         if ( state.loading ) {
             return (
@@ -71,7 +79,13 @@ function Form(props) {
                             />
                         </Row>
                     </div>
-                    <Button type="submit" onClick={fetch}>Calcular períodos</Button>
+                    <Button type="submit" onClick={() => {
+                        if ( validate() ) {
+                            fetch()
+                        } else {
+                            alert('Insira o horário de entrada e horário de saída')
+                        }
+                    }}> Calcular períodos </Button>
                 </Tab>
                 <Tab title='Resultados' className='tab-content'>
                     <div style={{display: 'flex', justifyContent: 'center'}}>
