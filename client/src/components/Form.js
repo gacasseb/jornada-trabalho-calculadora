@@ -12,7 +12,7 @@ function Form(props) {
 
     const fetch = () => {
         setLoading(true)
-        axios.post('http://localhost:4000/count-hours', time)
+        axios.post(props.api, time)
         .then((response) => {
             setLoading(false)
             console.log(response)
@@ -121,8 +121,6 @@ function Form(props) {
                     <div style={{display: 'flex', justifyContent: 'center'}}>
                         <Row>
                             {renderResults()}
-                            {/* <Autocomplete title='Período diurno' value={`${result.dayTime.hour} : ${result.dayTime.minute}`} disabled></Autocomplete>
-                            <Autocomplete title='Período noturno' disabled></Autocomplete> */}
                         </Row>
                     </div>
                 </Tab>
